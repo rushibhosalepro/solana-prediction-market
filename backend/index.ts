@@ -138,8 +138,12 @@ app.get("/api/v1/markets", async (req, res) => {
     return res.json({ error });
   }
 });
-app.post("/api/v1/user/split", async (req, res) => {});
-app.post("/api/v1/user/merge", async (req, res) => {});
+app.post("/api/v1/user/split", async (req, res) => {
+  // split balance into yes and no
+});
+app.post("/api/v1/user/merge", async (req, res) => {
+  // convert all yes and no shares to crypto
+});
 app.post("/api/v1/user/claim", async (req, res) => {
   try {
     const { marketId, userId } = req.body;
@@ -158,16 +162,22 @@ app.post("/api/v1/user/claim", async (req, res) => {
     if (marketOutcome == "OutcomeA") {
       userRecived = position?.yesShares ?? 0;
     } else userRecived = position?.noShares ?? 0;
+
+    // transfer winning to user wallet
+
     return res.json({ userRecived });
   } catch (error) {
     res.json({ error });
   }
 });
-app.post("/api/v1/user/onramp", async (req, res) => {});
+app.post("/api/v1/user/onramp", async (req, res) => {
+  // add money to wallet
+});
 
 // /api/v1/order/(limit/market)/type:yes/no,price:10c,qty:100
 app.get("/api/v1/order/:orderType/:option/:price/:qty", async (req, res) => {
   const { option, orderType, price, qty } = req.params;
+  // create new order limit / market
 });
 
 // api/v1/orderbook?type=yes/no
