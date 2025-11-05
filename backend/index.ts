@@ -87,23 +87,82 @@ app.post("/admin/signup", async (req, res) => {
 
 app.post("/api/v1/admin/market", async (req, res) => {
   try {
-  } catch (error) {}
+    const { title, description, expiresAt } = req.body;
+
+    const market = await prisma.market.create({
+      data: {
+        description,
+        expiresAt,
+        title,
+        yesPrice: 50,
+        noPrice: 50,
+        volume: 0,
+        Outcome: "Niether",
+        status: "active",
+      },
+    });
+    return res.json(market);
+  } catch (error) {
+    console.error(error);
+    return res.json({ error });
+  }
 });
 
 app.post("/api/v1/admin/result", async (req, res) => {
   try {
-  } catch (error) {}
+    const { marketId, outcome } = req.body();
+    await prisma.market.update({
+      where: {
+        id: marketId,
+      },
+      data: {
+        status: "resolved",
+        Outcome: outcome,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ error });
+  }
 });
 
-app.get("/api/v1/markets", async (req, res) => {});
+app.get("/api/v1/markets", async (req, res) => {
+  try {
+    const markets = await prisma.market.findMany({
+      where: {
+        status: "active",
+      },
+    });
+    return res.json(markets);
+  } catch (error) {
+    return res.json({ error });
+  }
+});
 app.post("/api/v1/user/split", async (req, res) => {});
 app.post("/api/v1/user/merge", async (req, res) => {});
-app.post("/api/v1/user/claim", async (req, res) => {});
+app.post("/api/v1/user/claim", async (req, res) => {
+  try {
+    const { marketId, userId } = req.body;
+    const market = await prisma.market.findFirst({
+      where: { id: marketId, status: "resolved" },
+    });
+    if (!market) {
+      res.json({ error: "market not found or not resolved, try again later" });
+    }
+  } catch (error) {
+    res.json({ error });
+  }
+});
 app.post("/api/v1/user/onramp", async (req, res) => {});
 
 // /api/v1/order/(limit/market)/type:yes/no,price:10c,qty:100
-app.post("api");
+app.get("/api/v1/order/:orderType/:option/:price/:qty", async (req, res) => {
+  const { option, orderType, price, qty } = req.params;
+});
 
 // api/v1/orderbook?type=yes/no
-app.get("/api");
+app.get("/api/v1/orderbook?type", async (req, res) => {
+  try {
+  } catch (error) {}
+});
 app.listen(3001, () => console.log("server running on port 3001"));
