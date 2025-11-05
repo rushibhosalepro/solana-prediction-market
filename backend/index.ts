@@ -143,12 +143,22 @@ app.post("/api/v1/user/merge", async (req, res) => {});
 app.post("/api/v1/user/claim", async (req, res) => {
   try {
     const { marketId, userId } = req.body;
-    const market = await prisma.market.findFirst({
-      where: { id: marketId, status: "resolved" },
+
+    const position = await prisma.position.findFirst({
+      where: { userId, marketId },
+      include: { market: true },
     });
-    if (!market) {
+    if (!position?.market) {
       res.json({ error: "market not found or not resolved, try again later" });
     }
+    const marketOutcome = position?.market.Outcome;
+    if (marketOutcome === "Niether")
+      return res.json({ error: "market is result is neither " });
+    let userRecived = 0;
+    if (marketOutcome == "OutcomeA") {
+      userRecived = position?.yesShares ?? 0;
+    } else userRecived = position?.noShares ?? 0;
+    return res.json({ userRecived });
   } catch (error) {
     res.json({ error });
   }

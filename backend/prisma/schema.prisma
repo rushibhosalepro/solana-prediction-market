@@ -15,10 +15,11 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(uuid())
+  id       String     @id @default(uuid())
   name     String
-  email    String @unique
+  email    String     @unique
   password String
+  Position Position[]
 }
 
 model Admin {
@@ -28,7 +29,7 @@ model Admin {
   password String
 }
 
-model market {
+model Market {
   id          String        @id @default(uuid())
   title       String
   description String
@@ -38,6 +39,7 @@ model market {
   volume      BigInt
   yesPrice    Int
   noPrice     Int
+  Position    Position[]
 }
 
 enum MarketStatus {
@@ -50,4 +52,14 @@ enum MarketOutcome {
   OutcomeA
   OutcomeB
   Niether
+}
+
+model Position {
+  id        String @id @default(uuid())
+  userId    String
+  marketId  String
+  yesShares Int    @default(0)
+  noShares  Int    @default(0)
+  user      User   @relation(fields: [userId], references: [id])
+  market    Market @relation(fields: [marketId], references: [id])
 }
