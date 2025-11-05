@@ -1,9 +1,16 @@
+import cors from "cors";
 import express from "express";
 import jwt from "jsonwebtoken";
 import prisma from "./prisma";
 const app = express();
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 
 app.post("/user/signin", async (req, res) => {
   try {
@@ -181,7 +188,7 @@ app.get("/api/v1/order/:orderType/:option/:price/:qty", async (req, res) => {
 });
 
 // api/v1/orderbook?type=yes/no
-app.get("/api/v1/orderbook?type", async (req, res) => {
+app.get("/api/v1/orderbook/:type", async (req, res) => {
   try {
   } catch (error) {}
 });
